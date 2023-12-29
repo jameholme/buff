@@ -17,14 +17,14 @@ def public_s3_buckets():
                 print(f"*~~> {bucket_name}")
         except ClientError as e:
             print(f"An error occurred while checking Block Public Access for {bucket_name}: {e}")
-    def list_all_buckets():
+    def list_public_buckets():
         s3_client = boto3.client('s3')
         response = s3_client.list_buckets()
         bucket_names = [bucket['Name'] for bucket in response['Buckets']]
         print("S3 buckets with public access:")
         for bucket_name in bucket_names:
             check_block_public_access(bucket_name)
-    list_all_buckets()
+    list_public_buckets()
 
 def iam_write_access():
     def gather_iam_groups():
