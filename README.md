@@ -4,6 +4,7 @@
 #### requirements:  
 * aws cli
 * aws credentials configured
+* pip3
 * python3
   * argparse 
   * boto3
