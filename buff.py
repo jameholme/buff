@@ -14,7 +14,7 @@ def public_s3_buckets():
             response['PublicAccessBlockConfiguration']['RestrictPublicBuckets']:
                 pass
             else:
-                print(f"-->{bucket_name}")
+                print(f"*~~> {bucket_name}")
         except ClientError as e:
             print(f"An error occurred while checking Block Public Access for {bucket_name}: {e}")
     def list_all_buckets():
@@ -30,31 +30,36 @@ def public_s3_buckets():
 def iam_write_access():
     iam_client = boto3.client('iam')
     #response =
-    print("Checking for IAM policies with write access")
+    print("IAM policies with write access:")
 
 def iam_full_access():
     iam_client = boto3.client('iam')
     #response =
-    print("Checking for IAM policies with full access")
+    print("IAM policies with full access:")
 
 def public_amis():
     ec2_client = boto3.client('ec2')
     #response =
-    print("Checking for publicly accessible AMIs")
+    print("Publicly accessible AMIs:")
 
 
 def security_groups_open_access():
     ec2_client = boto3.client('ec2')
     #response =
-    print("Checking for Security Groups with open access")
+    print("Security Groups with open access:")
 
 def all_checks():
+    print("===================================")
     public_s3_buckets()
+    print("===================================")
     iam_write_access()
+    print("===================================")
     iam_full_access()
+    print("===================================")
     public_amis()
+    print("===================================")
     security_groups_open_access()
-    print("Performing all available checks")
+    print("===================================")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Basic Utility for Finding Faults (BUFF) in AWS")
