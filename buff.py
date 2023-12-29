@@ -4,32 +4,26 @@ from botocore.exceptions import NoCredentialsError
 from botocore.exceptions import ClientError
 
 def public_s3_buckets():
-    def list_all_buckets():
-        s3_client = boto3.client('s3')
-        response = s3_client.list_buckets()
-        print("List of all S3 buckets:")
-        bucket_names = [bucket['Name'] for bucket in response['Buckets']]
-        for bucket_name in bucket_names:
-            print(bucket_name)
-            check_block_public_access(bucket_name)
-
     def check_block_public_access(bucket_name):
         s3_client = boto3.client('s3')
         try:
-            # Get Block Public Access settings
             response = s3_client.get_public_access_block(Bucket=bucket_name)
-
-            # Check if Block Public Access is turned off
             if response['PublicAccessBlockConfiguration']['BlockPublicAcls'] or \
             response['PublicAccessBlockConfiguration']['IgnorePublicAcls'] or \
             response['PublicAccessBlockConfiguration']['BlockPublicPolicy'] or \
             response['PublicAccessBlockConfiguration']['RestrictPublicBuckets']:
-                print(f"Bucket {bucket_name} has Block Public Access enabled.")
+                print(f"[{bucket_name}] has Block Public Access enabled.")
             else:
-                print(f"Bucket {bucket_name} does not have Block Public Access enabled.")
+                print(f"[{bucket_name}] DOES NOT have Block Public Access enabled.")
 
         except ClientError as e:
             print(f"An error occurred while checking Block Public Access for {bucket_name}: {e}")
+    def list_all_buckets():
+        s3_client = boto3.client('s3')
+        response = s3_client.list_buckets()
+        bucket_names = [bucket['Name'] for bucket in response['Buckets']]
+        for bucket_name in bucket_names:
+            check_block_public_access(bucket_name)
     list_all_buckets()
 
 
