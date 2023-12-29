@@ -12,16 +12,16 @@ def public_s3_buckets():
             response['PublicAccessBlockConfiguration']['IgnorePublicAcls'] or \
             response['PublicAccessBlockConfiguration']['BlockPublicPolicy'] or \
             response['PublicAccessBlockConfiguration']['RestrictPublicBuckets']:
-                print(f"[{bucket_name}] has Block Public Access enabled.")
+                pass
             else:
-                print(f"[{bucket_name}] DOES NOT have Block Public Access enabled.")
-
+                print(f"-->{bucket_name}")
         except ClientError as e:
             print(f"An error occurred while checking Block Public Access for {bucket_name}: {e}")
     def list_all_buckets():
         s3_client = boto3.client('s3')
         response = s3_client.list_buckets()
         bucket_names = [bucket['Name'] for bucket in response['Buckets']]
+        print("S3 buckets with public access:")
         for bucket_name in bucket_names:
             check_block_public_access(bucket_name)
     list_all_buckets()
@@ -30,7 +30,7 @@ def public_s3_buckets():
 def iam_write_access():
     iam_client = boto3.client('iam')
     #response =
-    print("Checking for IAM policies with Write access")
+    print("Checking for IAM policies with write access")
 
 def iam_full_access():
     iam_client = boto3.client('iam')
