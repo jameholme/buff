@@ -1,190 +1,123 @@
 import argparse
 import boto3
 from botocore.exceptions import NoCredentialsError
-from botocore.exceptions import ClientError
+
+def buff_banner():
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print("""
+    BBBBB    U   U  FFFFFF  FFFFFF
+    B    B   U   U  F       F
+    B    B   U   U  FFF     FFF
+    BBBBB    U   U  FFFFF   FFFFF
+    B    B   U   U  F       F
+    B    B   U   U  F       F
+    BBBBB     UUU   F       F
+          
+    Basic Utility for Finding Faults (in an AWS Account)
+    """)
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
 def public_s3_buckets():
-    def check_block_public_access(bucket_name):
+    def list_all_buckets():
         s3_client = boto3.client('s3')
-        try:
-            response = s3_client.get_public_access_block(Bucket=bucket_name)
-            if response['PublicAccessBlockConfiguration']['BlockPublicAcls'] or \
+        response = s3_client.list_buckets()
+        print(" * S3 - Checking for publicly accessible buckets:")
+        found_public_bucket = False
+        for bucket in response['Buckets']:
+            bucket_name = bucket['Name']
+            bucket_arn = f"arn:aws:s3:::{bucket_name}"
+            found_public_bucket |= check_block_public_access(bucket_name, bucket_arn)
+        if not found_public_bucket:
+            print(" --- No publicly accessible S3 buckets found")
+
+    def check_block_public_access(bucket_name, bucket_arn):
+        s3_client = boto3.client('s3')
+        response = s3_client.get_public_access_block(Bucket=bucket_name)
+        if response['PublicAccessBlockConfiguration']['BlockPublicAcls'] or \
             response['PublicAccessBlockConfiguration']['IgnorePublicAcls'] or \
             response['PublicAccessBlockConfiguration']['BlockPublicPolicy'] or \
             response['PublicAccessBlockConfiguration']['RestrictPublicBuckets']:
-                pass
-            else:
-                print(f"*~~> {bucket_name}")
-        except ClientError as e:
-            print(f"An error occurred while checking Block Public Access for {bucket_name}: {e}")
-    def list_public_buckets():
-        s3_client = boto3.client('s3')
-        response = s3_client.list_buckets()
-        bucket_names = [bucket['Name'] for bucket in response['Buckets']]
-        print("S3 buckets with public access:")
-        for bucket_name in bucket_names:
-            check_block_public_access(bucket_name)
-    list_public_buckets()
-
-def iam_write_access():
-    def gather_iam_groups():
-        def list_groups():
-            iam_client = boto3.client('iam')
-            response = iam_client.list_groups()
-            group_names = [group['GroupName'] for group in response['Groups']]
-            return group_names
-
-        def check_write_access_policies(group_name, iam_client):
-            response = iam_client.list_attached_group_policies(GroupName=group_name)
-            for attached_policy in response.get('AttachedPolicies', []):
-                policy_arn = attached_policy['PolicyArn']
-                policy_response = iam_client.get_policy(PolicyArn=policy_arn)
-                policy_document = get_policy_document(iam_client, policy_arn)
-                if has_write_access_permissions(policy_document):
-                    print(f"*~~> '{group_name}': {policy_arn}")
-
-        def get_policy_document(iam_client, policy_arn):
-            policy_response = iam_client.get_policy(PolicyArn=policy_arn)
-            if 'DefaultVersionId' in policy_response['Policy']:
-                version_id = policy_response['Policy']['DefaultVersionId']
-                version_response = iam_client.get_policy_version(PolicyArn=policy_arn, VersionId=version_id)
-                return version_response['PolicyVersion']['Document']
-            elif 'Policy' in policy_response:
-                return policy_response['Policy']['Document']
-            else:
-                raise ValueError("Unsupported response structure for get_policy")
-
-        def has_write_access_permissions(policy_document):
-            for statement in policy_document.get('Statement', []):
-                if 'Action' in statement and any('Write' in action for action in statement['Action']):
-                    return True
-
             return False
-
-        def check_iam_groups():
-            iam_client = boto3.client('iam')
-            group_names = list_groups()
-            for group_name in group_names:
-                check_write_access_policies(group_name, iam_client)
-        check_iam_groups()
-    print("Groups with Write Access:")
-    gather_iam_groups()
-
-    def gather_iam_users():
-
-        def list_users():
-            iam_client = boto3.client('iam')
-            response = iam_client.list_users()
-            user_names = [user['UserName'] for user in response['Users']]
-            return user_names
-
-        def check_write_access_policies(user_name, iam_client):
-            response = iam_client.list_attached_user_policies(UserName=user_name)
-            for attached_policy in response.get('AttachedPolicies', []):
-                policy_arn = attached_policy['PolicyArn']
-                policy_response = iam_client.get_policy(PolicyArn=policy_arn)
-                policy_document = get_policy_document(iam_client, policy_arn)
-                if has_write_access_permissions(policy_document):
-                    print(f"*~~> '{user_name}': {policy_arn}")
-                else:
-                    pass
-
-        def get_policy_document(iam_client, policy_arn):
-            policy_response = iam_client.get_policy(PolicyArn=policy_arn)
-            if 'DefaultVersionId' in policy_response['Policy']:
-                version_id = policy_response['Policy']['DefaultVersionId']
-                version_response = iam_client.get_policy_version(PolicyArn=policy_arn, VersionId=version_id)
-                return version_response['PolicyVersion']['Document']
-            elif 'Policy' in policy_response:
-                return policy_response['Policy']['Document']
-            else:
-                raise ValueError("Unsupported response structure for get_policy")
-
-        def has_write_access_permissions(policy_document):
-            for statement in policy_document.get('Statement', []):
-                if 'Action' in statement and any('Write' in action for action in statement['Action']):
-                    return True
-            return False
-
-        def check_iam_users():
-            iam_client = boto3.client('iam')
-            user_names = list_users()
-            for user_name in user_names:
-                check_write_access_policies(user_name, iam_client)
-        check_iam_users()
-    print("Users with Write Access:")
-    gather_iam_users()
-
-def iam_full_access():
-    iam_client = boto3.client('iam')
-    #response =
-    print("IAM policies with full access:")
+        else:
+            print(f" !!! Bucket Name: {bucket_name} - ARN: {bucket_arn}")
+            return True
+    list_all_buckets()
 
 def public_amis():
     ec2_client = boto3.client('ec2')
-    #response =
-    print("Publicly accessible AMIs:")
-
+    sts_client = boto3.client('sts')
+    account_id = sts_client.get_caller_identity()['Account']
+    response = ec2_client.describe_images(Owners=[account_id], Filters=[{'Name': 'is-public', 'Values': ['true']}])
+    print(" * AMI - Checking for publicly accessible images:")
+    if not response['Images']:
+        print(" --- No publicly accessible AMIs were found")
+        return
+    for image in response['Images']:
+        print(f" !!! AMI ID: {image['ImageId']} - Name: {image.get('Name', 'N/A')} - Description: {image.get('Description', 'N/A')}")
 
 def security_groups_open_access():
     ec2_client = boto3.client('ec2')
-    #response =
-    print("Security Groups with open access:")
+    response = ec2_client.describe_security_groups()
+    print(" * SG - Checking for 0.0.0.0/0 source rules:")
+    open_access_groups = []
+    for group in response['SecurityGroups']:
+        for permission in group['IpPermissions']:
+            if permission.get('IpRanges'):
+                for ip_range in permission['IpRanges']:
+                    if ip_range['CidrIp'] == '0.0.0.0/0':
+                        open_access_groups.append(group)
+                        break
+        if open_access_groups and group in open_access_groups:
+            print(f" !!! Group ID: {group['GroupId']} - Group Name: {group['GroupName']}")
+            for permission in group['IpPermissions']:
+                protocol = permission['IpProtocol']
+                from_port = permission.get('FromPort', 'All')
+                to_port = permission.get('ToPort', 'All')
+                print(f"     - Protocol: {protocol}, From Port: {from_port}, To Port: {to_port}")
+    if not open_access_groups:
+        print(" --- No security groups found with 0.0.0.0/0 source rules")
+    return open_access_groups
 
 def all_checks():
-    print("===================================")
     public_s3_buckets()
-    print("===================================")
-    iam_write_access()
-    print("===================================")
-    iam_full_access()
-    print("===================================")
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     public_amis()
-    print("===================================")
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     security_groups_open_access()
-    print("===================================")
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Basic Utility for Finding Faults (BUFF) in AWS")
-
-    parser.add_argument("--public-s3", action="store_true", help="checks for publicly accessible S3 buckets")
-    parser.add_argument("--iam-write-access", action="store_true", help="checks for groups and users with with write access")
-    parser.add_argument("--iam-full-access", action="store_true", help="checks for groups and users with full access")
-    parser.add_argument("--public-ami", action="store_true", help="checks for publicly accessible AMIs")
-    parser.add_argument("--security-groups", action="store_true", help="checks for Security Groups with inbound rules with open access")
-    parser.add_argument("--all", action="store_true", help="performs all available checks")
-
+    
+    parser.add_argument("-s3", action="store_true", help="checks for publicly accessible S3 buckets")
+    parser.add_argument("-ami", action="store_true", help="checks for publicly accessible AMIs")
+    parser.add_argument("-sg", action="store_true", help="checks for Security Groups with inbound source rules for 0.0.0.0/0")
+    parser.add_argument("-all", action="store_true", help="performs all available checks")
     args = parser.parse_args()
 
-    if args.public_s3:
+    if args.s3:
         try:
+            buff_banner()
             public_s3_buckets()
         except NoCredentialsError:
             print("AWS credentials are not configured. Please run 'aws configure' to set them up.")
-    elif args.iam_write_access:
+    elif args.ami:
         try:
-            iam_write_access()
-        except NoCredentialsError:
-            print("AWS credentials are not configured. Please run 'aws configure' to set them up.")
-    elif args.iam_full_access:
-        try:
-            iam_full_access()
-        except NoCredentialsError:
-            print("AWS credentials are not configured. Please run 'aws configure' to set them up.")
-    elif args.public_ami:
-        try:
+            buff_banner()
             public_amis()
         except NoCredentialsError:
             print("AWS credentials are not configured. Please run 'aws configure' to set them up.")
-    elif args.security_groups:
+    elif args.sg:
         try:
+            buff_banner()
             security_groups_open_access()
         except NoCredentialsError:
             print("AWS credentials are not configured. Please run 'aws configure' to set them up.")
     elif args.all:
         try:
+            buff_banner()
             all_checks()
         except NoCredentialsError:
             print("AWS credentials are not configured. Please run 'aws configure' to set them up.")
     else:
-        print("Please provide a valid option. Use --help for available options")
+        print("Please provide a valid option. Use -h, or --help for available options")
