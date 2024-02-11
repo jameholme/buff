@@ -29,14 +29,14 @@ BBBBBBBBBBBBBBBBB         UUUUUUUUU      FFFFFFFFFFF           FFFFFFFFFFF
   * botocore.exceptions
 
 #### usage:  
-`buff.py [-h] [-s3] [-ami] [-sg] [--all]`
+`buff.py [-h] [-s3] [-ami] [-sg] [-all]`
 
 #### arguments:  
   `-h`                 show this help message and exit  
   `-s3`                checks for publicly accessible S3 buckets  
   `-ami`               checks for publicly accessible AMIs  
   `-sg`                checks for Security Groups with inbound source rules for 0.0.0.0/0  
-  `--all`              performs all available checks  
+  `-all`              performs all available checks  
 
 #### to-do list:  
 * write a function that checks iam policies for desired permissions
