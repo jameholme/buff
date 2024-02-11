@@ -16,7 +16,7 @@ B:::::::::::::::::B   UU:::::::::::::UU  F::::::::FF           F::::::::FF
 B::::::::::::::::B      UU:::::::::UU    F::::::::FF           F::::::::FF            
 BBBBBBBBBBBBBBBBB         UUUUUUUUU      FFFFFFFFFFF           FFFFFFFFFFF
   
- Basic Utility for Finding Faults (in an AWS Account)
+Basic Utility for Finding Faults (in an AWS Account)
 ```
 #### requirements:  
 * aws cli
