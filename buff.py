@@ -3,19 +3,28 @@ import boto3
 from botocore.exceptions import NoCredentialsError
 
 def buff_banner():
-    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     print("""
-    BBBBB    U   U  FFFFFF  FFFFFF
-    B    B   U   U  F       F
-    B    B   U   U  FFF     FFF
-    BBBBB    U   U  FFFFF   FFFFF
-    B    B   U   U  F       F
-    B    B   U   U  F       F
-    BBBBB     UUU   F       F
-          
+    BBBBBBBBBBBBBBBBB   UUUUUUUU     UUUUUUUUFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF     ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⡀
+    B::::::::::::::::B  U::::::U     U::::::UF::::::::::::::::::::FF::::::::::::::::::::F     ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣶⣿⣿⣿⣿⣷⣦⣄
+    B::::::BBBBBB:::::B U::::::U     U::::::UF::::::::::::::::::::FF::::::::::::::::::::F     ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢾⠿⡏⢿⡟⠿⠁⢸⣿⣷⡄
+    BB:::::B     B:::::BUU:::::U     U:::::UUFF::::::FFFFFFFFF::::FFF::::::FFFFFFFFF::::F     ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣁⣀⡀⢠⣶⠶⠀⠁⣽⣿⣆
+    B::::B     B:::::B U:::::U     U:::::U   F:::::F       FFFFFF  F:::::F       FFFFFF      ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠁⠀⠀⠀⠀⠀⠘⣿⣿⣷⡀
+    B::::B     B:::::B U:::::D     D:::::U   F:::::F               F:::::F                        ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⣿⣿⣿⣆⠀
+    B::::BBBBBB:::::B  U:::::D     D:::::U   F::::::FFFFFFFFFF     F::::::FFFFFFFFFF          ⢀⣠⣴⣶⣶⣶⣦⣄⠀⠀⠀⠀⢀⣀⣀⣀⠀⠀⠀⣼⣿⣿⣿⣿⣧⠀  
+    B:::::::::::::BB   U:::::D     D:::::U   F:::::::::::::::F     F:::::::::::::::F         ⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⣐⢾⣿⣿⣿⣿⣷⣦⣌⡻⣿⣿⣿⣿⣿⣧
+    B::::BBBBBB:::::B  U:::::D     D:::::U   F:::::::::::::::F     F:::::::::::::::F         ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣾⣿⣿⣿⣿⣿⡇
+    B::::B     B:::::B U:::::D     D:::::U   F::::::FFFFFFFFFF     F::::::FFFFFFFFFF         ⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⢋⡉⠛⠿⣿⣿⣿⣿⣿⡿⢿⣿⣿⣿⣿⣿⣿⡇
+    B::::B     B:::::B U:::::D     D:::::U   F:::::F               F:::::F                   ⣿⣿⣿⣿⣿⣿⣿⣿⡏⢠⣿⣿⣷⡦⠀⣈⣉⣀⣤⣶⣿⣟⣛⠛⠛⠛⠛⠃
+    B::::B     B:::::B U::::::U   U::::::U   F:::::F               F:::::F                   ⣿⣿⣿⣿⣿⣿⣿⡿⠀⠾⠛⠋⠁⠐⠺⠿⠿⠿⠛⠛⠉⠁
+    BB:::::BBBBBB::::::B U:::::::UUU:::::::U FF:::::::FF           FF:::::::FF               ⣿⣿⣿⣿⣿⣿⠟⢁⣴⣶⣾⠇⠀
+    B:::::::::::::::::B   UU:::::::::::::UU  F::::::::FF           F::::::::FF               ⣿⣿⣿⣿⠿⠋⣰⣿⣿⣿⠏⠀
+    B::::::::::::::::B      UU:::::::::UU    F::::::::FF           F::::::::FF               ⠛⠛⠋⠁⠐⠛⠛⠛⠛⠋⠀
+    BBBBBBBBBBBBBBBBB         UUUUUUUUU      FFFFFFFFFFF           FFFFFFFFFFF
+    
     Basic Utility for Finding Faults (in an AWS Account)
     """)
-    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
 def public_s3_buckets():
     def list_all_buckets():
