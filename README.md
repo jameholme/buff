@@ -20,7 +20,8 @@ BBBBBBBBBBBBBBBBB         UUUUUUUUU      FFFFFFFFFFF           FFFFFFFFFFF
 ```
 #### requirements:  
 * aws cli
-* aws credentials configured + aws permissions to query the resources
+* aws credentials configured
+* aws permissions to query the resources
 * pip3
 * python3
   * argparse 
