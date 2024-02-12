@@ -1,6 +1,6 @@
 # BUFF  
 BUFF is a basic utility for finding faults in an AWS account.  
-This utility focuses solely on potentialy misconfigured resources that allow public access.
+This utility focuses solely on potentially misconfigured resources that allow public access.
 
 #### Requirements:  
 * AWS CLI
